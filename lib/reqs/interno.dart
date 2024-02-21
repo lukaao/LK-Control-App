@@ -63,8 +63,8 @@ class MyReqs {
     );
 
     if (myResponse.statusCode == 201) {
-      var response = json.decode(myResponse.body);
-      return response['token'];
+      Map<String, dynamic> response = json.decode(myResponse.body);
+      return response;
     } else {
       throw Exception("Usuário ou senha invalido.");
     }

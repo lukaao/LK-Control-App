@@ -40,9 +40,11 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      token =
+
+      Map<String, dynamic> token =
           await MyReqs().login(_usuarioController.text, _senhaController.text);
-      prefs.setString("TOKEN", token);
+
+      prefs.setString("TOKEN", token['token']);
 
       showSimpleNotification(
         const Text("Sucesso ao logar."),
