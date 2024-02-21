@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lk/pages/login/loginPage.dart';
+import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class MyApp extends StatelessWidget {
@@ -13,11 +14,11 @@ class MyApp extends StatelessWidget {
       title: 'LK Control',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primaryColorDark: Colors.purple[900],
+          primaryColorDark: Color.fromARGB(255, 54, 15, 102),
           primaryColorLight: Colors.white,
           useMaterial3: false,
           fontFamily: 'Poppins'),
-      home: LoginPage(),
+      home: ProdutosPage(),
     ));
   }
 }

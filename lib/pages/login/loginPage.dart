@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:lk/components/buttom.dart';
+import 'package:lk/pages/produto/produtoPage.dart';
+import 'package:lk/reqs/interno.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,6 +22,48 @@ class _LoginPageState extends State<LoginPage> {
 
   FocusNode myFocusNodeUsuario = FocusNode();
   FocusNode myFocusNodeSenha = FocusNode();
+
+  _avancarPage() async {
+    String token = "";
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (_usuarioController.text.isEmpty) {
+        throw Exception("É necessario informar usuario");
+      }
+      if (_senhaController.text.isEmpty) {
+        throw Exception("É necessario informar a senha");
+      }
+
+      prefs.setString("USUARIO", _usuarioController.text);
+      prefs.setString("SENHA", _senhaController.text);
+
+      setState(() {
+        _isLoading = true;
+      });
+      token =
+          await MyReqs().login(_usuarioController.text, _senhaController.text);
+      prefs.setString("TOKEN", token);
+
+      showSimpleNotification(
+        const Text("Sucesso ao logar."),
+        background: Colors.green,
+        position: NotificationPosition.bottom,
+      );
+
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => ProdutosPage()));
+    } catch (e) {
+      print(e);
+      showSimpleNotification(Text(e.toString().replaceAll("Exception:", "")),
+          background: Colors.red,
+          position: NotificationPosition.bottom,
+          duration: const Duration(seconds: 6));
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +157,10 @@ class _LoginPageState extends State<LoginPage> {
                         height: 40,
                         width: 150,
                         label: "Avançar",
-                        onPressed: () {}),
+                        labelColor: Colors.black,
+                        onPressed: () {
+                          _avancarPage();
+                        }),
                   ),
                   SizedBox(height: 20),
                   Row(
