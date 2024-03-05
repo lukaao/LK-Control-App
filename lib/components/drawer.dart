@@ -53,7 +53,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Olá, $userName",
+                      "Olá, $userName!",
                       style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     Row(

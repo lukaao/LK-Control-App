@@ -8,6 +8,7 @@ import 'package:lk/database/repository/categoria-repository.dart';
 import 'package:lk/database/repository/produto-repository.dart';
 import 'package:lk/entity/categoria.dart';
 import 'package:lk/entity/produto.dart';
+import 'package:lk/pages/produto/detailProdutoPage.dart';
 import 'package:lk/sync/sync-categoria.dart';
 import 'package:lk/sync/sync-produtos.dart';
 
@@ -74,6 +75,8 @@ class _ProdutosPageState extends State<ProdutosPage> {
   void initState() {
     super.initState();
     _sincronizar();
+    BottomNavigationController instance = BottomNavigationController.instance;
+    instance.changeIndex(1);
   }
 
   @override
@@ -83,6 +86,8 @@ class _ProdutosPageState extends State<ProdutosPage> {
       drawer: MyDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => DetailProdutoPage()));
           // MyDataBase.dropDatabase();
         },
         backgroundColor: Theme.of(context).primaryColorDark,

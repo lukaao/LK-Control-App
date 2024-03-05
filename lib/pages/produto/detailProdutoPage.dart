@@ -1,0 +1,314 @@
+import 'package:flutter/material.dart';
+import 'package:lk/components/appbar.dart';
+import 'package:lk/components/bottomNavigationbar.dart';
+import 'package:lk/components/buttom.dart';
+import 'package:lk/components/text.dart';
+import 'package:lk/database/repository/categoria-repository.dart';
+import 'package:lk/entity/categoria.dart';
+import 'package:lk/entity/produto.dart';
+import 'package:lk/sync/sync-categoria.dart';
+
+class DetailProdutoPage extends StatefulWidget {
+  Produto? produto;
+  DetailProdutoPage({super.key, this.produto});
+
+  @override
+  State<DetailProdutoPage> createState() => _DetailProdutoPageState();
+}
+
+class _DetailProdutoPageState extends State<DetailProdutoPage> {
+  List<String> categorias = [];
+  CategoriaRepository catRepo = CategoriaRepository();
+  String? categoriaSelecionada;
+
+  Produto? produto;
+
+  _categorias() async {
+    List<Categoria> cats = await catRepo.get();
+
+    for (var cat in cats) {
+      setState(() {
+        categorias.add(cat.descricao);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _categorias();
+    BottomNavigationController instance = BottomNavigationController.instance;
+    instance.changeIndex(1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: MyAppBar(title: "Produto"),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                // Primeira linha
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Código',
+                          labelStyle: TextStyle(color: Colors.black),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .primaryColorDark), // Altere a cor aqui
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .primaryColorDark), // Altere a cor aqui
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Descrição',
+                          labelStyle: TextStyle(color: Colors.black),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .primaryColorDark), // Altere a cor aqui
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .primaryColorDark), // Altere a cor aqui
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          labelText: 'Categoria',
+                          labelStyle: TextStyle(color: Colors.black),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColorDark),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColorDark),
+                          ),
+                        ),
+                        hint: const Text('Categoria'),
+                        value: categoriaSelecionada,
+                        onChanged: (String? novoValor) {
+                          setState(() {
+                            categoriaSelecionada = novoValor!;
+                          });
+                        },
+                        items: categorias.map((String categoria) {
+                          return DropdownMenuItem<String>(
+                            value: categoria.toString(),
+                            child: Text(categoria.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    (produto != null)
+                        ? Expanded(
+                            child: TextField(
+                              // controller: ,
+                              decoration: InputDecoration(
+                                labelText: 'Status',
+                                labelStyle: TextStyle(color: Colors.black),
+                                enabled: false,
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .primaryColorDark), // Altere a cor aqui
+                                ),
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                labelText: '',
+                                labelStyle: TextStyle(color: Colors.black),
+                                border: InputBorder.none,
+                                enabled: false,
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.white), // Altere a cor aqui
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 120,
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    // MyButtom(
+                    //   label: 'Adicionar',
+                    //   width: MediaQuery.of(context).size.width * 0.4,
+                    //   height: 40,
+                    //   onPressed: () {},
+                    // ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.1,
+                    //   height: 10,
+                    // ),
+                    MyButtom(
+                      label: 'Salvar',
+                      labelColor: Colors.white,
+                      color: Theme.of(context).primaryColorDark,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 40,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 80,
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width,
+                    ),
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(
+                          label: Text(
+                            "Status",
+                            softWrap: true,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "DT inicio",
+                            softWrap: true,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "DT fim",
+                            softWrap: true,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Cliente",
+                            softWrap: true,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Endereço",
+                            softWrap: true,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Valor",
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                      rows: List<DataRow>.generate(
+                        1,
+                        (index) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.08);
+                            }
+
+                            if (index.isEven) {
+                              return Colors.grey.withOpacity(0.3);
+                            }
+                            return null;
+                          }),
+                          cells: <DataCell>[
+                            DataCell(
+                              Text(
+                                "Faturado",
+                                // itens[index].codprod.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "04/03/2024",
+                                // itens[index].descrprod.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "08/03/2024",
+                                // itens[index].descrprod.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "Lucas",
+                                // itens[index].codvolcodbarra.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "Rua Acará 189, Eldorado",
+                                // itens[index].quantidade.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "R\$ 123,00",
+                                // itens[index].quantidade.toString(),
+                                softWrap: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigation(),
+    );
+  }
+}
