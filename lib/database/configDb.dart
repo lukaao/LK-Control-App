@@ -1,6 +1,6 @@
+import "package:lk/database/repository/aluguel-repository.dart";
 import "package:lk/database/repository/categoria-repository.dart";
 import "package:lk/database/repository/produto-repository.dart";
-import "package:shared_preferences/shared_preferences.dart";
 import "package:sqflite/sqflite.dart";
 import "package:path/path.dart";
 
@@ -60,6 +60,31 @@ CREATE TABLE ${ProdutoRepository.tableName} (
   DESCRICAO TEXT,
   STATUS INTEGER,
   CODCAT INTEGER,
+  DATAINC DATETIME,
+  DATAALT DATETIME
+)
+""",
+    """
+CREATE TABLE ${AluguelRepository.tableName} (
+  ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  CODALU INTEGER,
+  CODPROD INTEGER,
+  CODCLI INTEGER,
+  STATUS INTEGER,
+  PRECOINICIAL REAL,
+  ENDERECO TEXT,
+  DATAINICIO DATETIME,
+  DATAFINAL DATETIME,
+  DATAINC DATETIME,
+  DATAALT DATETIME
+)
+""",
+    """
+CREATE TABLE ${AluguelRepository.tableName} (
+  ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  CODCLI INTEGER,
+  NOME TEXT,
+  CONTATO TEXT,
   DATAINC DATETIME,
   DATAALT DATETIME
 )
