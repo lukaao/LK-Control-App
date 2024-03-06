@@ -1,4 +1,4 @@
-import "package:lk/entity/Cliente.dart";
+import "package:lk/entity/cliente.dart";
 import "package:sqflite/sqflite.dart";
 import "../configDb.dart";
 

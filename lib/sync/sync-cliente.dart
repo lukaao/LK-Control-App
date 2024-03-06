@@ -1,7 +1,8 @@
 import "dart:convert";
 
 import "package:lk/database/repository/cliente-repository.dart";
-import "package:lk/entity/Cliente.dart";
+import "package:lk/entity/cliente.dart";
+
 import "package:lk/reqs/interno.dart";
 
 class SincronizarCliente {

@@ -8,6 +8,7 @@ import 'package:lk/database/repository/cliente-repository.dart';
 
 import 'package:lk/entity/aluguel.dart';
 import 'package:lk/entity/categoria.dart';
+import 'package:lk/entity/cliente.dart';
 import 'package:lk/entity/produto.dart';
 import 'package:lk/sync/sync-alugueis.dart';
 import 'package:lk/sync/sync-categoria.dart';
@@ -60,18 +61,9 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
     }
 
     setState(() {
+      alugueis.addAll(alus);
       alugueis = alus;
     });
-  }
-
-  _categorias() async {
-    List<Categoria> cats = await catRepo.get();
-
-    for (var cat in cats) {
-      setState(() {
-        categorias.add(cat.descricao);
-      });
-    }
   }
 
   _campos() async {
@@ -97,7 +89,7 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
     super.initState();
     produto = widget.produto;
     _campos();
-    _categorias();
+    _sincronizar();
     BottomNavigationController instance = BottomNavigationController.instance;
     instance.changeIndex(1);
   }
@@ -321,7 +313,7 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
                                 ),
                               ],
                               rows: List<DataRow>.generate(
-                                1,
+                                alugueis.length,
                                 (index) => DataRow(
                                   color:
                                       MaterialStateProperty.resolveWith<Color?>(

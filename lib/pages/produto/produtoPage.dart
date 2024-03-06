@@ -87,9 +87,9 @@ class _ProdutosPageState extends State<ProdutosPage> {
         drawer: MyDrawer(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => DetailProdutoPage()));
-            // MyDataBase.dropDatabase();
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (BuildContext context) => DetailProdutoPage()));
+            MyDataBase.dropDatabase();
           },
           backgroundColor: Theme.of(context).primaryColorDark,
           child: Icon(Icons.add),
