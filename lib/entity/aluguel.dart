@@ -1,4 +1,5 @@
 import 'package:lk/entity/cliente.dart';
+import 'package:lk/entity/produto.dart';
 
 class Aluguel {
   int? id;
@@ -13,6 +14,7 @@ class Aluguel {
   DateTime dataInc;
   DateTime dataAlt;
   Cliente? cliente;
+  Produto? produto;
 
   Aluguel(
       {this.id,
@@ -26,7 +28,8 @@ class Aluguel {
       required this.codProd,
       required this.dataInc,
       required this.dataAlt,
-      this.cliente});
+      this.cliente,
+      this.produto});
 
   Map<String, dynamic> toMap() {
     return {
@@ -58,6 +61,7 @@ class Aluguel {
       dataInc: DateTime.parse(map['DATAINC']),
       dataAlt: DateTime.parse(map['DATAALT']),
       cliente: map['CLIENTE'] != null ? Cliente.fromMap(map['CLIENTE']) : null,
+      produto: map['PRODUTO'] != null ? Produto.fromMap(map['PRODUTO']) : null,
     );
   }
   factory Aluguel.fromJson(Map<String, dynamic> map) {
@@ -74,6 +78,7 @@ class Aluguel {
       dataInc: DateTime.parse(map['DATAINC']),
       dataAlt: DateTime.parse(map['DATAALT']),
       cliente: Cliente.fromMap(map['CLIENTE']),
+      produto: Produto.fromMap(map['PRODUTO']),
     );
   }
 }

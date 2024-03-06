@@ -25,7 +25,7 @@ class MyDataBase {
 
     final dataBasePath = await getDatabasesPath();
     db = await openDatabase(
-      join(dataBasePath, "univale.db"),
+      join(dataBasePath, "lkcontrol.db"),
       onCreate: (db, version) async {
         for (var table in tables) {
           db.execute(table);

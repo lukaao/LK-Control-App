@@ -10,6 +10,9 @@ import 'package:lk/entity/aluguel.dart';
 import 'package:lk/entity/categoria.dart';
 import 'package:lk/entity/cliente.dart';
 import 'package:lk/entity/produto.dart';
+import 'package:lk/helpers/formaters.dart';
+import 'package:lk/pages/aluguel/detailAlguelPage.dart';
+import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:lk/sync/sync-alugueis.dart';
 import 'package:lk/sync/sync-categoria.dart';
 import 'package:lk/sync/sync-cliente.dart';
@@ -58,7 +61,9 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
     for (var alu in alus) {
       Cliente? alucli = await cliRepo.getByCodCli(alu.codCli);
       alu.cliente = alucli;
+      alu.produto = produto;
     }
+    alus.sort((a, b) => b.dataInicio.compareTo(a.dataInicio));
 
     setState(() {
       alugueis.addAll(alus);
@@ -277,31 +282,31 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
                               columns: const [
                                 DataColumn(
                                   label: Text(
+                                    "Ação",
+                                    softWrap: true,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
                                     "Status",
                                     softWrap: true,
                                   ),
                                 ),
                                 DataColumn(
                                   label: Text(
-                                    "DT inicio",
+                                    "DTINC",
                                     softWrap: true,
                                   ),
                                 ),
                                 DataColumn(
                                   label: Text(
-                                    "DT fim",
+                                    "DTFIM",
                                     softWrap: true,
                                   ),
                                 ),
                                 DataColumn(
                                   label: Text(
                                     "Cliente",
-                                    softWrap: true,
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    "Endereço",
                                     softWrap: true,
                                   ),
                                 ),
@@ -333,44 +338,58 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
                                   }),
                                   cells: <DataCell>[
                                     DataCell(
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        DetailAluguelPage(
+                                                  aluguel: alugueis[index],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(Icons
+                                              .arrow_circle_right_outlined),
+                                          color: Theme.of(context)
+                                              .primaryColorDark),
+                                    ),
+                                    DataCell(
                                       Text(
-                                        "Faturado",
-                                        // itens[index].codprod.toString(),
+                                        (alugueis[index].status == 0)
+                                            ? "Faturado"
+                                            : (alugueis[index].status == 1)
+                                                ? "Em andamento"
+                                                : "Cancelado",
                                         softWrap: true,
                                       ),
                                     ),
                                     DataCell(
                                       Text(
-                                        "04/03/2024",
-                                        // itens[index].descrprod.toString(),
+                                        "${alugueis[index].dataInicio.month.toString().padLeft(2, '0')}/${alugueis[index].dataInicio.day.toString().padLeft(2, '0')}",
                                         softWrap: true,
                                       ),
                                     ),
                                     DataCell(
                                       Text(
-                                        "08/03/2024",
-                                        // itens[index].descrprod.toString(),
+                                        "${alugueis[index].dataFinal.month.toString().padLeft(2, '0')}/${alugueis[index].dataFinal.day.toString().padLeft(2, '0')}",
                                         softWrap: true,
                                       ),
                                     ),
                                     DataCell(
                                       Text(
-                                        "Lucas",
-                                        // itens[index].codvolcodbarra.toString(),
+                                        alugueis[index]
+                                            .cliente!
+                                            .nome
+                                            .toString(),
                                         softWrap: true,
                                       ),
                                     ),
                                     DataCell(
                                       Text(
-                                        "Rua Acará 189, Eldorado",
-                                        // itens[index].quantidade.toString(),
-                                        softWrap: true,
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Text(
-                                        "R\$ 123,00",
-                                        // itens[index].quantidade.toString(),
+                                        formatarReal(
+                                            alugueis[index].precoInicial),
                                         softWrap: true,
                                       ),
                                     ),
