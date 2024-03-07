@@ -2,7 +2,6 @@ import "dart:convert";
 import "package:lk/database/repository/produto-repository.dart";
 import "package:lk/entity/produto.dart";
 import "package:lk/reqs/interno.dart";
-import "package:shared_preferences/shared_preferences.dart";
 
 class SincronizarProduto {
   ProdutoRepository prodRepo = ProdutoRepository();

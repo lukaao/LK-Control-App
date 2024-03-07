@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lk/pages/login/loginPage.dart';
 import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:overlay_support/overlay_support.dart';
 

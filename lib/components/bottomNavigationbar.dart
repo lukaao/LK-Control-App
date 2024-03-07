@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:lk/pages/aluguel/aluguelPage.dart";
-import "package:lk/pages/login/loginPage.dart";
 import "package:lk/pages/produto/produtoPage.dart";
 
 class BottomNavigation extends StatelessWidget {

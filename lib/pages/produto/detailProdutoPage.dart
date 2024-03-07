@@ -12,7 +12,6 @@ import 'package:lk/entity/cliente.dart';
 import 'package:lk/entity/produto.dart';
 import 'package:lk/helpers/formaters.dart';
 import 'package:lk/pages/aluguel/detailAlguelPage.dart';
-import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:lk/sync/sync-alugueis.dart';
 import 'package:lk/sync/sync-categoria.dart';
 import 'package:lk/sync/sync-cliente.dart';

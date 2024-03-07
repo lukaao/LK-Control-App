@@ -4,63 +4,70 @@ import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/components/buttom.dart';
 import 'package:lk/entity/aluguel.dart';
 import 'package:lk/helpers/formaters.dart';
-import 'package:lk/pages/faturar/faturarPage.dart';
-import 'package:lk/sync/sync-alugueis.dart';
-import 'package:lk/sync/sync-cliente.dart';
 
-class DetailAluguelPage extends StatefulWidget {
-  Aluguel? aluguel;
-  DetailAluguelPage({super.key, this.aluguel});
+class FaturarPage extends StatefulWidget {
+  Aluguel aluguel;
+  FaturarPage({super.key, required this.aluguel});
 
   @override
-  State<DetailAluguelPage> createState() => _DetailAluguelPageState();
+  State<FaturarPage> createState() => _FaturarPageState();
 }
 
-class _DetailAluguelPageState extends State<DetailAluguelPage> {
+class _FaturarPageState extends State<FaturarPage> {
   Aluguel? aluguel;
 
-  TextEditingController _statusController = TextEditingController();
+  DateTime? _dataSelecionada;
+
   TextEditingController _clienteController = TextEditingController();
   TextEditingController _produtoController = TextEditingController();
-  TextEditingController _contatoController = TextEditingController();
-  TextEditingController _enderecoController = TextEditingController();
-  TextEditingController _datainicioController = TextEditingController();
-  TextEditingController _datafinalController = TextEditingController();
-  TextEditingController _valorController = TextEditingController();
+  TextEditingController _dataFaturadoController = TextEditingController();
+  TextEditingController _valorInicialController = TextEditingController();
+  TextEditingController _valorFinalController = TextEditingController();
+  TextEditingController _custoController = TextEditingController();
 
   FocusNode myFocusNodeCliente = FocusNode();
   FocusNode myFocusNodeProduto = FocusNode();
-  FocusNode myFocusNodeContato = FocusNode();
-  FocusNode myFocusNodeEndereco = FocusNode();
-  FocusNode myFocusNodeDataInicio = FocusNode();
-  FocusNode myFocusNodeDataFinal = FocusNode();
-  FocusNode myFocusNodeValor = FocusNode();
+  FocusNode myFocusNodeDataFaturado = FocusNode();
+  FocusNode myFocusNodeValorInicial = FocusNode();
+  FocusNode myFocusNodeValorFinal = FocusNode();
+  FocusNode myFocusNodeCusto = FocusNode();
 
-  _sincronizar() async {
-    await SincronizarAluguel().buscarAluguel();
-    await SincronizarCliente().buscarCliente();
-  }
+  _sincronizar() async {}
 
   _campos() async {
     if (aluguel != null) {
-      if (aluguel!.status == 0) {
-        _statusController.text = "Faturado";
-      } else if (aluguel!.status == 1) {
-        _statusController.text = "Em andamento";
-      } else {
-        _statusController.text = "Cancelado";
-      }
       _clienteController.text = aluguel!.cliente!.nome;
-      _contatoController.text = aluguel!.cliente!.contato;
       _produtoController.text = aluguel!.produto!.descricao;
-      _enderecoController.text = aluguel!.endereco;
-      _datainicioController.text = formatarData(aluguel!.dataInicio);
-      _datafinalController.text = formatarData(aluguel!.dataFinal);
-      _valorController.text = formatarReal(aluguel!.precoInicial);
     }
+  }
 
-    // _descricaoController.text = produto!.descricao;
-    // _codigoController.text = produto!.codigo;
+  Future<void> _selecionarData(BuildContext context) async {
+    var dataEscolhida = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Theme.of(context).primaryColorDark,
+
+            colorScheme: ColorScheme.light(
+              primary: Theme.of(context).primaryColorDark,
+            ), // Altere a cor do calendário aqui
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (dataEscolhida != null && dataEscolhida != _dataSelecionada) {
+      setState(() {
+        _dataSelecionada = dataEscolhida;
+        _dataFaturadoController.text = formatarData(dataEscolhida);
+      });
+    }
   }
 
   @override
@@ -78,7 +85,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: MyAppBar(title: "Aluguel"),
+        appBar: MyAppBar(title: "Faturar"),
         body: ListView(
           children: [
             SizedBox(
@@ -99,8 +106,10 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                           onSubmitted: (value) {
                             myFocusNodeCliente.unfocus();
                           },
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             labelText: 'Cliente',
+                            enabled: false,
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -118,13 +127,15 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                       SizedBox(width: 20),
                       Expanded(
                         child: TextField(
-                          controller: _contatoController,
-                          focusNode: myFocusNodeContato,
+                          controller: _produtoController,
+                          focusNode: myFocusNodeProduto,
                           onSubmitted: (value) {
-                            myFocusNodeContato.unfocus();
+                            myFocusNodeProduto.unfocus();
                           },
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                            labelText: 'Contato',
+                            enabled: false,
+                            labelText: 'Produto',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -146,80 +157,13 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: _enderecoController,
-                          focusNode: myFocusNodeEndereco,
+                          controller: _valorInicialController,
+                          focusNode: myFocusNodeValorInicial,
                           onSubmitted: (value) {
-                            myFocusNodeEndereco.unfocus();
+                            myFocusNodeValorInicial.unfocus();
                           },
                           decoration: InputDecoration(
-                            labelText: 'Endreço',
-                            labelStyle: TextStyle(color: Colors.black),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      (aluguel != null)
-                          ? Expanded(
-                              child: TextField(
-                                controller: _statusController,
-                                style: TextStyle(
-                                    color: (_statusController.text ==
-                                            "Em andamento")
-                                        ? Colors.green
-                                        : (_statusController.text == "Faturado")
-                                            ? Colors.orange
-                                            : Colors.grey),
-                                decoration: InputDecoration(
-                                  labelText: 'Status',
-                                  labelStyle: TextStyle(color: Colors.black),
-                                  enabled: false,
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .primaryColorDark), // Altere a cor aqui
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  labelText: '',
-                                  labelStyle: TextStyle(color: Colors.black),
-                                  border: InputBorder.none,
-                                  enabled: false,
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            Colors.white), // Altere a cor aqui
-                                  ),
-                                ),
-                              ),
-                            ),
-                    ],
-                  ),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _datainicioController,
-                          focusNode: myFocusNodeDataInicio,
-                          onSubmitted: (value) {
-                            myFocusNodeDataInicio.unfocus();
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Data Inicio',
+                            labelText: 'Valor Inicial',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -237,13 +181,13 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                       SizedBox(width: 20),
                       Expanded(
                         child: TextField(
-                          controller: _datafinalController,
-                          focusNode: myFocusNodeDataFinal,
+                          controller: _valorFinalController,
+                          focusNode: myFocusNodeValorFinal,
                           onSubmitted: (value) {
-                            myFocusNodeDataFinal.unfocus();
+                            myFocusNodeValorFinal.unfocus();
                           },
                           decoration: InputDecoration(
-                            labelText: 'Data Final',
+                            labelText: 'Valor Final',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -260,18 +204,18 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                       ),
                     ],
                   ),
-
+                  SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: _produtoController,
-                          focusNode: myFocusNodeProduto,
+                          controller: _custoController,
+                          focusNode: myFocusNodeCusto,
                           onSubmitted: (value) {
-                            myFocusNodeProduto.unfocus();
+                            myFocusNodeCusto.unfocus();
                           },
                           decoration: InputDecoration(
-                            labelText: 'Produto',
+                            labelText: 'Custo Operacional',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -289,13 +233,16 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                       SizedBox(width: 20),
                       Expanded(
                         child: TextField(
-                          controller: _valorController,
-                          focusNode: myFocusNodeValor,
+                          controller: _dataFaturadoController,
+                          focusNode: myFocusNodeDataFaturado,
                           onSubmitted: (value) {
-                            myFocusNodeValor.unfocus();
+                            myFocusNodeDataFaturado.unfocus();
+                          },
+                          onTap: () {
+                            _selecionarData(context);
                           },
                           decoration: InputDecoration(
-                            labelText: 'Valor',
+                            labelText: 'Data Faturado',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -319,7 +266,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                   Wrap(
                     alignment: WrapAlignment.center,
                     children: [
-                      if (aluguel != null && aluguel!.status == 1)
+                      if (aluguel != null)
                         MyButtom(
                           label: "Faturar",
                           labelColor: Colors.white,
@@ -327,25 +274,11 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                           width: MediaQuery.of(context).size.width * 0.4,
                           height: 40,
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) => FaturarPage(
-                                      aluguel: aluguel!,
-                                    )));
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (BuildContext context) =>
+                            //         FaturarPage()));
                           },
                         ),
-                      if (aluguel != null && aluguel!.status == 1)
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.1,
-                          height: 10,
-                        ),
-                      MyButtom(
-                        label: (aluguel != null) ? 'Salvar' : "Alugar",
-                        labelColor: Colors.white,
-                        color: Theme.of(context).primaryColorDark,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 40,
-                        onPressed: () {},
-                      ),
                     ],
                   ),
                   const SizedBox(

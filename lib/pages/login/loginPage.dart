@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:lk/components/buttom.dart';
 import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:lk/reqs/interno.dart';

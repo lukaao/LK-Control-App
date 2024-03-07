@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/components/drawer.dart';
-import 'package:lk/components/layoutTelas.dart';
-import 'package:lk/database/configDb.dart';
+
 import 'package:lk/database/repository/aluguel-repository.dart';
-import 'package:lk/database/repository/categoria-repository.dart';
+
 import 'package:lk/database/repository/cliente-repository.dart';
 import 'package:lk/database/repository/produto-repository.dart';
 import 'package:lk/entity/aluguel.dart';
-import 'package:lk/entity/categoria.dart';
 import 'package:lk/entity/cliente.dart';
 import 'package:lk/entity/produto.dart';
 import 'package:lk/pages/aluguel/detailAlguelPage.dart';
-import 'package:lk/pages/produto/detailProdutoPage.dart';
+
 import 'package:lk/sync/sync-alugueis.dart';
-import 'package:lk/sync/sync-categoria.dart';
+
 import 'package:lk/sync/sync-cliente.dart';
 import 'package:lk/sync/sync-produtos.dart';
 
