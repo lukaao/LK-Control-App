@@ -1,6 +1,7 @@
 import "package:lk/database/repository/aluguel-repository.dart";
 import "package:lk/database/repository/categoria-repository.dart";
 import "package:lk/database/repository/cliente-repository.dart";
+import "package:lk/database/repository/faturar-repository.dart";
 import "package:lk/database/repository/produto-repository.dart";
 import "package:sqflite/sqflite.dart";
 import "package:path/path.dart";
@@ -86,6 +87,18 @@ CREATE TABLE ${ClienteRepository.tableName} (
   CODCLI INTEGER,
   NOME TEXT,
   CONTATO TEXT,
+  DATAINC DATETIME,
+  DATAALT DATETIME
+)
+""",
+    """
+CREATE TABLE ${FaturarRepository.tableName} (
+  ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  CODFAT INTEGER,
+  CODALU INTEGER,
+  CUSTO REAL,
+  PRECOFINAL REAL,
+  DATAFATURADO DATETIME,
   DATAINC DATETIME,
   DATAALT DATETIME
 )

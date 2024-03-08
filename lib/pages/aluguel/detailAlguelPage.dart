@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:lk/components/MyDialogInfoFatura.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/components/buttom.dart';
+import 'package:lk/database/repository/faturar-repository.dart';
 import 'package:lk/entity/aluguel.dart';
+import 'package:lk/entity/faturar.dart';
 import 'package:lk/helpers/formaters.dart';
 import 'package:lk/pages/faturar/faturarPage.dart';
 import 'package:lk/sync/sync-alugueis.dart';
 import 'package:lk/sync/sync-cliente.dart';
+import 'package:lk/sync/sync-faturar.dart';
 
 class DetailAluguelPage extends StatefulWidget {
   Aluguel? aluguel;
@@ -18,6 +22,9 @@ class DetailAluguelPage extends StatefulWidget {
 
 class _DetailAluguelPageState extends State<DetailAluguelPage> {
   Aluguel? aluguel;
+  List<Faturar> fatura = [];
+
+  DateTime? _dataSelecionada;
 
   TextEditingController _statusController = TextEditingController();
   TextEditingController _clienteController = TextEditingController();
@@ -36,9 +43,22 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
   FocusNode myFocusNodeDataFinal = FocusNode();
   FocusNode myFocusNodeValor = FocusNode();
 
+  FaturarRepository fatRepo = FaturarRepository();
+
   _sincronizar() async {
     await SincronizarAluguel().buscarAluguel();
     await SincronizarCliente().buscarCliente();
+    await SincronizarFaturar().buscarFaturar();
+
+    Faturar? fat = await fatRepo.getByCodAlu(aluguel!.codAlu);
+
+    if (mounted) {
+      if (fat != null) {
+        setState(() {
+          fatura.add(fat);
+        });
+      }
+    }
   }
 
   _campos() async {
@@ -58,9 +78,35 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
       _datafinalController.text = formatarData(aluguel!.dataFinal);
       _valorController.text = formatarReal(aluguel!.precoInicial);
     }
+  }
 
-    // _descricaoController.text = produto!.descricao;
-    // _codigoController.text = produto!.codigo;
+  Future<void> _selecionarData(BuildContext context, controller) async {
+    var dataEscolhida = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Theme.of(context).primaryColorDark,
+
+            colorScheme: ColorScheme.light(
+              primary: Theme.of(context).primaryColorDark,
+            ), // Altere a cor do calendário aqui
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (dataEscolhida != null && dataEscolhida != _dataSelecionada) {
+      setState(() {
+        _dataSelecionada = dataEscolhida;
+        controller.text = formatarData(dataEscolhida);
+      });
+    }
   }
 
   @override
@@ -212,48 +258,72 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: _datainicioController,
-                          focusNode: myFocusNodeDataInicio,
-                          onSubmitted: (value) {
-                            myFocusNodeDataInicio.unfocus();
+                        child: InkWell(
+                          onTap: () {
+                            _selecionarData(context, _datainicioController);
                           },
-                          decoration: InputDecoration(
-                            labelText: 'Data Inicio',
-                            labelStyle: TextStyle(color: Colors.black),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Data Inicio',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _datainicioController
+                                      .text, // Exibe a data aqui
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                Icon(Icons
+                                    .calendar_today), // Ícone que simboliza a interação
+                              ],
                             ),
                           ),
                         ),
                       ),
                       SizedBox(width: 20),
                       Expanded(
-                        child: TextField(
-                          controller: _datafinalController,
-                          focusNode: myFocusNodeDataFinal,
-                          onSubmitted: (value) {
-                            myFocusNodeDataFinal.unfocus();
+                        child: InkWell(
+                          onTap: () {
+                            _selecionarData(context, _datafinalController);
                           },
-                          decoration: InputDecoration(
-                            labelText: 'Data Final',
-                            labelStyle: TextStyle(color: Colors.black),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Data Final',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _datafinalController
+                                      .text, // Exibe a data aqui
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                Icon(Icons
+                                    .calendar_today), // Ícone que simboliza a interação
+                              ],
                             ),
                           ),
                         ),
@@ -351,6 +421,100 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                   const SizedBox(
                     height: 80,
                   ),
+
+                  (fatura.length > 0)
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width,
+                            ),
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(
+                                  label: Text(
+                                    "Ação",
+                                    softWrap: true,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    "Valor",
+                                    softWrap: true,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    "Custo",
+                                    softWrap: true,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    "Data Faturado",
+                                    softWrap: true,
+                                  ),
+                                ),
+                              ],
+                              rows: List<DataRow>.generate(
+                                fatura.length,
+                                (index) => DataRow(
+                                  color:
+                                      MaterialStateProperty.resolveWith<Color?>(
+                                          (Set<MaterialState> states) {
+                                    if (states
+                                        .contains(MaterialState.selected)) {
+                                      return Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.08);
+                                    }
+
+                                    if (index.isEven) {
+                                      return Colors.grey.withOpacity(0.3);
+                                    }
+                                    return null;
+                                  }),
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      IconButton(
+                                          onPressed: () {
+                                            showMyDialogInfoFatura(
+                                                context: context,
+                                                title: "Fatura",
+                                                aluguel: aluguel!,
+                                                faturar: fatura[index]);
+                                          },
+                                          icon: const Icon(Icons
+                                              .arrow_circle_right_outlined),
+                                          color: Theme.of(context)
+                                              .primaryColorDark),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        formatarReal(fatura[index]!.precoFinal),
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        formatarReal(fatura[index]!.custo),
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        "${fatura[index]!.dataFaturado.month.toString().padLeft(2, '0')}/${fatura[index]!.dataFaturado.day.toString().padLeft(2, '0')}",
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
             ),

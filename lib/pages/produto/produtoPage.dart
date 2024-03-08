@@ -36,11 +36,14 @@ class _ProdutosPageState extends State<ProdutosPage> {
       Categoria? catprod = await catRepo.getByCodCat(prod.codCat);
       prod.categoria = catprod;
     }
-    setState(() {
-      produtos = prods;
-      produtosFiltrados = prods;
-      _isLoading = false;
-    });
+
+    if (mounted) {
+      setState(() {
+        produtos = prods;
+        produtosFiltrados = prods;
+        _isLoading = false;
+      });
+    }
   }
 
   _pesquisa(value) {
@@ -86,9 +89,9 @@ class _ProdutosPageState extends State<ProdutosPage> {
         drawer: MyDrawer(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => DetailProdutoPage()));
-            //MyDataBase.dropDatabase();
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (BuildContext context) => DetailProdutoPage()));
+            MyDataBase.dropDatabase();
           },
           backgroundColor: Theme.of(context).primaryColorDark,
           child: Icon(Icons.add),

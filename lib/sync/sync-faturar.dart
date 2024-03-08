@@ -1,36 +1,36 @@
 import "dart:convert";
 
-import "package:lk/database/repository/aluguel-repository.dart";
-import "package:lk/entity/aluguel.dart";
+import "package:lk/database/repository/faturar-repository.dart";
+import "package:lk/entity/faturar.dart";
 import "package:lk/reqs/interno.dart";
 
-class SincronizarAluguel {
-  AluguelRepository aluRepo = AluguelRepository();
+class SincronizarFaturar {
+  FaturarRepository fatRepo = FaturarRepository();
 
-  buscarAluguel() async {
+  buscarFaturar() async {
     try {
-      var response = await MyReqs().get("/aluguel/listar/");
+      var response = await MyReqs().get("/aluguel/listar/faturados");
       if (response.statusCode == 200) {
-        List<Aluguel> alugueis =
+        List<Faturar> faturados =
             List<Map<String, dynamic>>.from(json.decode(response.body))
-                .map((e) => Aluguel.fromJson(e))
+                .map((e) => Faturar.fromJson(e))
                 .toList();
 
-        for (var aluguel in alugueis) {
-          Aluguel? aluExiste = await aluRepo.getByCodAlu(aluguel.codAlu);
+        for (var faturado in faturados) {
+          Faturar? fatExiste = await fatRepo.getByCodFat(faturado.codFat);
 
-          if (aluExiste == null) {
-            await aluRepo.insert(aluguel);
+          if (fatExiste == null) {
+            await fatRepo.insert(faturado);
           } else {
-            aluguel.id = aluExiste.id;
-            await aluRepo.update(aluguel);
+            faturado.id = fatExiste.id;
+            await fatRepo.update(faturado);
           }
         }
       } else if (response.statusCode != 404) {
-        throw Exception("Erro ao buscar log de Aluguel ${response.body}");
+        throw Exception("Erro ao buscar de Aluguel ${response.body}");
       }
     } catch (e, stc) {
-      print("Erro ao buscar Alugueis! $e");
+      print("Erro ao buscar Faturados! $e");
       print(stc);
     }
   }

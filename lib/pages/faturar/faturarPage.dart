@@ -3,11 +3,13 @@ import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/components/buttom.dart';
 import 'package:lk/entity/aluguel.dart';
+import 'package:lk/entity/faturar.dart';
 import 'package:lk/helpers/formaters.dart';
 
 class FaturarPage extends StatefulWidget {
   Aluguel aluguel;
-  FaturarPage({super.key, required this.aluguel});
+  Faturar? fatura;
+  FaturarPage({super.key, required this.aluguel, this.fatura});
 
   @override
   State<FaturarPage> createState() => _FaturarPageState();
@@ -15,6 +17,8 @@ class FaturarPage extends StatefulWidget {
 
 class _FaturarPageState extends State<FaturarPage> {
   Aluguel? aluguel;
+
+  Faturar? fatura;
 
   DateTime? _dataSelecionada;
 
@@ -38,6 +42,13 @@ class _FaturarPageState extends State<FaturarPage> {
     if (aluguel != null) {
       _clienteController.text = aluguel!.cliente!.nome;
       _produtoController.text = aluguel!.produto!.descricao;
+      _valorInicialController.text = formatarReal(aluguel!.precoInicial);
+    }
+
+    if (fatura != null) {
+      _dataFaturadoController.text = formatarData(fatura!.dataFaturado);
+      _valorFinalController.text = formatarReal(fatura!.precoFinal);
+      _custoController.text = formatarReal(fatura!.custo);
     }
   }
 
@@ -74,6 +85,7 @@ class _FaturarPageState extends State<FaturarPage> {
   void initState() {
     super.initState();
     aluguel = widget.aluguel;
+    fatura = widget.fatura;
     _campos();
     _sincronizar();
     BottomNavigationController instance = BottomNavigationController.instance;
@@ -162,7 +174,9 @@ class _FaturarPageState extends State<FaturarPage> {
                           onSubmitted: (value) {
                             myFocusNodeValorInicial.unfocus();
                           },
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
+                            enabled: false,
                             labelText: 'Valor Inicial',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
@@ -232,27 +246,36 @@ class _FaturarPageState extends State<FaturarPage> {
                       ),
                       SizedBox(width: 20),
                       Expanded(
-                        child: TextField(
-                          controller: _dataFaturadoController,
-                          focusNode: myFocusNodeDataFaturado,
-                          onSubmitted: (value) {
-                            myFocusNodeDataFaturado.unfocus();
-                          },
+                        child: InkWell(
                           onTap: () {
                             _selecionarData(context);
                           },
-                          decoration: InputDecoration(
-                            labelText: 'Data Faturado',
-                            labelStyle: TextStyle(color: Colors.black),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'Data Final',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .primaryColorDark), // Altere a cor aqui
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _dataFaturadoController
+                                      .text, // Exibe a data aqui
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                Icon(Icons
+                                    .calendar_today), // Ícone que simboliza a interação
+                              ],
                             ),
                           ),
                         ),
@@ -266,7 +289,7 @@ class _FaturarPageState extends State<FaturarPage> {
                   Wrap(
                     alignment: WrapAlignment.center,
                     children: [
-                      if (aluguel != null)
+                      if (fatura == null)
                         MyButtom(
                           label: "Faturar",
                           labelColor: Colors.white,

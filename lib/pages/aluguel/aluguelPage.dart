@@ -46,12 +46,13 @@ class _AluguelPageState extends State<AluguelPage> {
       Cliente? alucli = await cliRepo.getByCodCli(alu.codCli);
       alu.cliente = alucli;
     }
-
-    setState(() {
-      alugueis = alus;
-      alugueisFiltrados = alus;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        alugueis = alus;
+        alugueisFiltrados = alus;
+        _isLoading = false;
+      });
+    }
   }
 
   _pesquisa(value) {

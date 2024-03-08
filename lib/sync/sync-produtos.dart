@@ -29,7 +29,7 @@ class SincronizarProduto {
         throw Exception("Erro ao buscar log de Produto ${response.body}");
       }
     } catch (e, stc) {
-      print("Erro ao buscar log de produto! $e");
+      print("Erro ao buscar produtos! $e");
       print(stc);
     }
   }

@@ -64,10 +64,12 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
     }
     alus.sort((a, b) => b.dataInicio.compareTo(a.dataInicio));
 
-    setState(() {
-      alugueis.addAll(alus);
-      alugueis = alus;
-    });
+    if (mounted) {
+      setState(() {
+        alugueis.addAll(alus);
+        alugueis = alus;
+      });
+    }
   }
 
   _campos() async {
