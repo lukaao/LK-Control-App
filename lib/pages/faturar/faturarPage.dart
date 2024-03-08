@@ -42,13 +42,13 @@ class _FaturarPageState extends State<FaturarPage> {
     if (aluguel != null) {
       _clienteController.text = aluguel!.cliente!.nome;
       _produtoController.text = aluguel!.produto!.descricao;
-      _valorInicialController.text = formatarReal(aluguel!.precoInicial);
+      _valorInicialController.text = aluguel!.precoInicial.toString();
     }
 
     if (fatura != null) {
       _dataFaturadoController.text = formatarData(fatura!.dataFaturado);
-      _valorFinalController.text = formatarReal(fatura!.precoFinal);
-      _custoController.text = formatarReal(fatura!.custo);
+      _valorFinalController.text = fatura!.precoFinal.toString();
+      _custoController.text = fatura!.custo.toString();
     }
   }
 
@@ -176,6 +176,7 @@ class _FaturarPageState extends State<FaturarPage> {
                           },
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
+                            prefixText: 'R\$ ',
                             enabled: false,
                             labelText: 'Valor Inicial',
                             labelStyle: TextStyle(color: Colors.black),
@@ -200,7 +201,9 @@ class _FaturarPageState extends State<FaturarPage> {
                           onSubmitted: (value) {
                             myFocusNodeValorFinal.unfocus();
                           },
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                            prefixText: 'R\$ ',
                             labelText: 'Valor Final',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
@@ -228,7 +231,9 @@ class _FaturarPageState extends State<FaturarPage> {
                           onSubmitted: (value) {
                             myFocusNodeCusto.unfocus();
                           },
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                            prefixText: 'R\$ ',
                             labelText: 'Custo Operacional',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(

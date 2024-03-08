@@ -55,20 +55,22 @@ class _DetailProdutoPageState extends State<DetailProdutoPage> {
       });
     }
 
-    List<Aluguel> alus = await aluRepo.getByCodProd(produto!.codProd);
+    if (produto != null) {
+      List<Aluguel> alus = await aluRepo.getByCodProd(produto!.codProd);
 
-    for (var alu in alus) {
-      Cliente? alucli = await cliRepo.getByCodCli(alu.codCli);
-      alu.cliente = alucli;
-      alu.produto = produto;
-    }
-    alus.sort((a, b) => b.dataInicio.compareTo(a.dataInicio));
+      for (var alu in alus) {
+        Cliente? alucli = await cliRepo.getByCodCli(alu.codCli);
+        alu.cliente = alucli;
+        alu.produto = produto;
+      }
+      alus.sort((a, b) => b.dataInicio.compareTo(a.dataInicio));
 
-    if (mounted) {
-      setState(() {
-        alugueis.addAll(alus);
-        alugueis = alus;
-      });
+      if (mounted) {
+        setState(() {
+          alugueis.addAll(alus);
+          alugueis = alus;
+        });
+      }
     }
   }
 

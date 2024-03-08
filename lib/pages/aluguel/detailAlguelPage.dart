@@ -50,14 +50,16 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
     await SincronizarCliente().buscarCliente();
     await SincronizarFaturar().buscarFaturar();
 
-    Faturar? fat = await fatRepo.getByCodAlu(aluguel!.codAlu);
+    Faturar? fat;
 
-    if (mounted) {
-      if (fat != null) {
-        setState(() {
-          fatura.add(fat);
-        });
-      }
+    if (aluguel != null) {
+      fat = await fatRepo.getByCodAlu(aluguel!.codAlu);
+    }
+
+    if (mounted && fat != null) {
+      setState(() {
+        fatura.add(fat!);
+      });
     }
   }
 
@@ -76,7 +78,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
       _enderecoController.text = aluguel!.endereco;
       _datainicioController.text = formatarData(aluguel!.dataInicio);
       _datafinalController.text = formatarData(aluguel!.dataFinal);
-      _valorController.text = formatarReal(aluguel!.precoInicial);
+      _valorController.text = aluguel!.precoInicial.toString();
     }
   }
 
@@ -366,6 +368,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                           },
                           decoration: InputDecoration(
                             labelText: 'Valor',
+                            prefixText: 'R\$ ',
                             labelStyle: TextStyle(color: Colors.black),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
