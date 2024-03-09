@@ -72,7 +72,7 @@ class Aluguel {
       dataInicio: DateTime.parse(map['DATAINICIO']),
       dataFinal: DateTime.parse(map['DATAFINAL']),
       endereco: map['ENDERECO'],
-      precoInicial: map['PRECOINICIAL'].toDouble(),
+      precoInicial: (map['PRECOINICIAL'] as num).toDouble(),
       codCli: map['CODCLI'],
       codProd: map['CODPROD'],
       dataInc: DateTime.parse(map['DATAINC']),

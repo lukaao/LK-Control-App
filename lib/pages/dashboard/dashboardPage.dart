@@ -2,6 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
+import 'package:lk/database/repository/faturar-repository.dart';
+import 'package:lk/entity/faturar.dart';
+import 'package:lk/helpers/formaters.dart';
+import 'package:lk/sync/sync-faturar.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -11,8 +15,25 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int touchedIndex = -1;
+  FaturarRepository fatRepo = FaturarRepository();
 
+  double saida = 0;
+  double entrada = 0;
+
+  _sincronizar() async {
+    await SincronizarFaturar().buscarFaturar();
+    List<Faturar> faturados = await fatRepo.get();
+    if (mounted) {
+      for (var faturado in faturados) {
+        setState(() {
+          saida += faturado.custo;
+          entrada += faturado.precoFinal;
+        });
+      }
+    }
+  }
+
+  int touchedIndex = -1;
   List<PieChartSectionData> showingSections() {
     return List.generate(2, (i) {
       final isTouched = i == touchedIndex;
@@ -23,8 +44,8 @@ class _DashboardPageState extends State<DashboardPage> {
         case 0:
           return PieChartSectionData(
             color: Colors.green[700],
-            value: 40,
-            title: '40%',
+            value: entrada,
+            title: formatarReal(entrada),
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,
@@ -36,13 +57,13 @@ class _DashboardPageState extends State<DashboardPage> {
         case 1:
           return PieChartSectionData(
             color: Colors.red,
-            value: 15,
-            title: '15%',
+            value: saida,
+            title: formatarReal(saida),
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
               shadows: shadows,
             ),
           );
@@ -55,8 +76,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-
-    // _sincronizar();
+    _sincronizar();
     BottomNavigationController instance = BottomNavigationController.instance;
     instance.changeIndex(0);
   }

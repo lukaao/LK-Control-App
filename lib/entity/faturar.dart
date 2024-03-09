@@ -49,8 +49,8 @@ class Faturar {
     return Faturar(
       id: map['ID'],
       codFat: map['CODFAT'],
-      custo: map['CUSTO'],
-      precoFinal: map['PRECOFINAL'],
+      custo: (map['CUSTO'] as num).toDouble(),
+      precoFinal: (map['PRECOFINAL'] as num).toDouble(),
       dataFaturado: DateTime.parse(map['DATAFATURADO']),
       codAlu: map['CODALU'],
       dataInc: DateTime.parse(map['DATAINC']),

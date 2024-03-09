@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lk/pages/dashboard/dashboardPage.dart';
 import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:overlay_support/overlay_support.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
           primaryColorLight: Colors.white,
           useMaterial3: false,
           fontFamily: 'Poppins'),
-      home: ProdutosPage(),
+      home: DashboardPage(),
     ));
   }
 }

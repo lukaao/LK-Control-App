@@ -27,7 +27,7 @@ class SincronizarFaturar {
           }
         }
       } else if (response.statusCode != 404) {
-        throw Exception("Erro ao buscar de Aluguel ${response.body}");
+        throw Exception("Erro ao buscar de Faturados ${response.body}");
       }
     } catch (e, stc) {
       print("Erro ao buscar Faturados! $e");
