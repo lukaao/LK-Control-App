@@ -41,6 +41,15 @@ class ProdutoRepository {
     return null;
   }
 
+  Future<List<Produto>> getByStatus() async {
+    final db = await open();
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableName, where: "STATUS = ?", whereArgs: [1]);
+    return List.generate(maps.length, (index) {
+      return Produto.fromMap(maps[index]);
+    });
+  }
+
   Future<void> update(Produto produto) async {
     final db = await open();
     await db.update(

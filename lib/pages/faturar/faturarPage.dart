@@ -257,7 +257,7 @@ class _FaturarPageState extends State<FaturarPage> {
                           },
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: 'Data Final',
+                              labelText: 'Data Faturado',
                               labelStyle: TextStyle(color: Colors.black),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(

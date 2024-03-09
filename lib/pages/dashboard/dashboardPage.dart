@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
+import 'package:lk/components/topNavbar.dart';
 import 'package:lk/database/repository/faturar-repository.dart';
 import 'package:lk/entity/faturar.dart';
 import 'package:lk/helpers/formaters.dart';
@@ -39,6 +40,21 @@ class _DashboardPageState extends State<DashboardPage> {
       }
     }
   }
+
+  List<String> items = [
+    "Dia",
+    "Semana",
+    "Mês",
+  ];
+
+  /// List of body icon
+  List<IconData> icons = [
+    Icons.calendar_today,
+    Icons.calendar_today,
+    Icons.calendar_today,
+  ];
+  int current = 0;
+  PageController pageController = PageController();
 
   int touchedIndex = -1;
   List<PieChartSectionData> showingSections() {
@@ -96,10 +112,72 @@ class _DashboardPageState extends State<DashboardPage> {
         appBar: MyAppBar(title: 'Dashboard'),
         body: Column(
           children: <Widget>[
+            SizedBox(
+              width: double.infinity,
+              height: 80,
+              child: Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Centraliza os itens
+                children: List.generate(items.length, (index) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            current = index;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.all(5),
+                          width: 100,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            color: current == index
+                                ? Colors.white70
+                                : Colors.white54,
+                            borderRadius: current == index
+                                ? BorderRadius.circular(6)
+                                : BorderRadius.circular(3),
+                            border: current == index
+                                ? Border.all(
+                                    color: Theme.of(context).primaryColorDark,
+                                    width: 2.5)
+                                : null,
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  icons[index],
+                                  size: current == index ? 23 : 20,
+                                  color: current == index
+                                      ? Colors.black
+                                      : Colors.grey.shade500,
+                                ),
+                                Text(
+                                  items[index],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: current == index
+                                        ? Colors.black
+                                        : Colors.grey.shade500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ),
             Expanded(
               child: Center(
                 child: Container(
-                  margin: EdgeInsets.only(top: 100),
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: PieChart(

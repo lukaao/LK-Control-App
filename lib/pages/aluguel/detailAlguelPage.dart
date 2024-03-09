@@ -6,8 +6,10 @@ import 'package:lk/components/buttom.dart';
 import 'package:lk/database/repository/faturar-repository.dart';
 import 'package:lk/entity/aluguel.dart';
 import 'package:lk/entity/faturar.dart';
+import 'package:lk/entity/produto.dart';
 import 'package:lk/helpers/formaters.dart';
 import 'package:lk/pages/faturar/faturarPage.dart';
+import 'package:lk/pages/produto/produtoPage.dart';
 import 'package:lk/sync/sync-alugueis.dart';
 import 'package:lk/sync/sync-cliente.dart';
 import 'package:lk/sync/sync-faturar.dart';
@@ -80,6 +82,13 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
       _datafinalController.text = formatarData(aluguel!.dataFinal);
       _valorController.text = aluguel!.precoInicial.toString();
     }
+  }
+
+  _callbackAddProduct(Produto prod) async {
+    print(prod);
+    setState(() {
+      _produtoController.text = prod.descricao!;
+    });
   }
 
   Future<void> _selecionarData(BuildContext context, controller) async {
@@ -339,6 +348,14 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                         child: TextField(
                           controller: _produtoController,
                           focusNode: myFocusNodeProduto,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProdutosPage(
+                                callBack: _callbackAddProduct,
+                                filtro: true,
+                              ),
+                            ));
+                          },
                           onSubmitted: (value) {
                             myFocusNodeProduto.unfocus();
                           },
@@ -366,6 +383,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                           onSubmitted: (value) {
                             myFocusNodeValor.unfocus();
                           },
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             labelText: 'Valor',
                             prefixText: 'R\$ ',

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/components/drawer.dart';
-import 'package:lk/components/layoutTelas.dart';
-import 'package:lk/database/configDb.dart';
 import 'package:lk/database/repository/categoria-repository.dart';
 import 'package:lk/database/repository/produto-repository.dart';
 import 'package:lk/entity/categoria.dart';
@@ -13,7 +11,9 @@ import 'package:lk/sync/sync-categoria.dart';
 import 'package:lk/sync/sync-produtos.dart';
 
 class ProdutosPage extends StatefulWidget {
-  const ProdutosPage({super.key});
+  final Function(Produto)? callBack;
+  bool? filtro;
+  ProdutosPage({super.key, this.filtro, this.callBack});
 
   @override
   State<ProdutosPage> createState() => _ProdutosPageState();
@@ -26,23 +26,42 @@ class _ProdutosPageState extends State<ProdutosPage> {
   CategoriaRepository catRepo = CategoriaRepository();
   ProdutoRepository prodRepo = ProdutoRepository();
 
+  bool filtro = false;
+
   _sincronizar() async {
     await SincronizarCategoria().buscarCategoria();
     await SincronizarProduto().buscarProduto();
 
-    List<Produto> prods = await prodRepo.get();
+    if (filtro == false) {
+      List<Produto> prods = await prodRepo.get();
 
-    for (var prod in prods) {
-      Categoria? catprod = await catRepo.getByCodCat(prod.codCat);
-      prod.categoria = catprod;
-    }
+      for (var prod in prods) {
+        Categoria? catprod = await catRepo.getByCodCat(prod.codCat);
+        prod.categoria = catprod;
+      }
 
-    if (mounted) {
-      setState(() {
-        produtos = prods;
-        produtosFiltrados = prods;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          produtos = prods;
+          produtosFiltrados = prods;
+          _isLoading = false;
+        });
+      }
+    } else if (filtro == true) {
+      List<Produto> prods = await prodRepo.getByStatus();
+
+      for (var prod in prods) {
+        Categoria? catprod = await catRepo.getByCodCat(prod.codCat);
+        prod.categoria = catprod;
+      }
+
+      if (mounted) {
+        setState(() {
+          produtos = prods;
+          produtosFiltrados = prods;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -77,6 +96,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
   void initState() {
     super.initState();
     _sincronizar();
+    filtro = widget.filtro ?? false;
     BottomNavigationController instance = BottomNavigationController.instance;
     instance.changeIndex(1);
   }
@@ -87,15 +107,17 @@ class _ProdutosPageState extends State<ProdutosPage> {
       child: Scaffold(
         appBar: MyAppBar(title: "Produtos"),
         drawer: MyDrawer(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => DetailProdutoPage()));
-            // MyDataBase.dropDatabase();
-          },
-          backgroundColor: Theme.of(context).primaryColorDark,
-          child: Icon(Icons.add),
-        ),
+        floatingActionButton: filtro == true
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => DetailProdutoPage()));
+                  // MyDataBase.dropDatabase();
+                },
+                backgroundColor: Theme.of(context).primaryColorDark,
+                child: Icon(Icons.add),
+              ),
         body: Stack(
           children: [
             Column(
@@ -142,11 +164,16 @@ class _ProdutosPageState extends State<ProdutosPage> {
                       Produto prod = produtosFiltrados[index];
                       return InkWell(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  DetailProdutoPage(
-                                    produto: prod,
-                                  )));
+                          if (widget.callBack != null && filtro == true) {
+                            widget.callBack!(prod);
+                            Navigator.of(context).pop();
+                          } else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    DetailProdutoPage(
+                                      produto: prod,
+                                    )));
+                          }
                         },
                         child: Column(
                           children: [
@@ -199,7 +226,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
               ),
           ],
         ),
-        bottomNavigationBar: BottomNavigation(),
+        bottomNavigationBar: filtro == false ? BottomNavigation() : null,
       ),
     );
   }
