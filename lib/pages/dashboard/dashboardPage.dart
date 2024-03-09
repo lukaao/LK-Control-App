@@ -17,18 +17,25 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   FaturarRepository fatRepo = FaturarRepository();
 
-  double saida = 0;
-  double entrada = 0;
+  double saida = 100;
+  double entrada = 10;
 
   _sincronizar() async {
     await SincronizarFaturar().buscarFaturar();
     List<Faturar> faturados = await fatRepo.get();
     if (mounted) {
+      saida = 0;
+      entrada = 0;
       for (var faturado in faturados) {
         setState(() {
           saida += faturado.custo;
           entrada += faturado.precoFinal;
         });
+      }
+
+      if (entrada == 0 && saida == 0) {
+        entrada = 1;
+        saida == 0;
       }
     }
   }
@@ -38,12 +45,12 @@ class _DashboardPageState extends State<DashboardPage> {
     return List.generate(2, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
-      final radius = isTouched ? 60.0 : 50.0;
+      final radius = isTouched ? 90.0 : 70.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: Colors.green[700],
+            color: Theme.of(context).primaryColorDark,
             value: entrada,
             title: formatarReal(entrada),
             radius: radius,
@@ -56,14 +63,15 @@ class _DashboardPageState extends State<DashboardPage> {
           );
         case 1:
           return PieChartSectionData(
-            color: Colors.red,
+            color: Colors.black,
+            // color: Colors.red,
             value: saida,
             title: formatarReal(saida),
             radius: radius,
             titleStyle: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
               shadows: shadows,
             ),
           );
@@ -86,18 +94,17 @@ class _DashboardPageState extends State<DashboardPage> {
     return SafeArea(
       child: Scaffold(
         appBar: MyAppBar(title: 'Dashboard'),
-        body: Center(
-          child: AspectRatio(
-            aspectRatio: 1.3,
-            child: Row(
-              children: <Widget>[
-                const SizedBox(
-                  height: 18,
-                ),
-                Expanded(
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 100),
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: PieChart(
+                      swapAnimationDuration: Duration(milliseconds: 1000),
+                      swapAnimationCurve: Curves.easeInOutQuint,
                       PieChartData(
                         pieTouchData: PieTouchData(
                           touchCallback:
@@ -118,47 +125,72 @@ class _DashboardPageState extends State<DashboardPage> {
                           show: false,
                         ),
                         sectionsSpace: 0,
-                        centerSpaceRadius: 80,
+                        centerSpaceRadius: 75,
                         sections: showingSections(),
                       ),
                     ),
                   ),
                 ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [],
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).primaryColorDark,
                       ),
                     ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Entrada",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Saída",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
                   ],
                 ),
               ],
             ),
-          ),
+            SizedBox(height: 100),
+          ],
         ),
         bottomNavigationBar: BottomNavigation(),
       ),
     );
   }
 }
-
-
-
-
-
-  // Row(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           Padding(
-  //             padding: const EdgeInsets.all(16),
-  //             child: Row(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
