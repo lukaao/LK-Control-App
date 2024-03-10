@@ -1,3 +1,5 @@
+import 'package:lk/entity/aluguel.dart';
+
 class Faturar {
   int? id;
   int codFat;
@@ -7,17 +9,18 @@ class Faturar {
   int codAlu;
   DateTime dataInc;
   DateTime dataAlt;
+  Aluguel? aluguel;
 
-  Faturar({
-    this.id,
-    required this.codFat,
-    required this.custo,
-    required this.precoFinal,
-    required this.dataFaturado,
-    required this.codAlu,
-    required this.dataInc,
-    required this.dataAlt,
-  });
+  Faturar(
+      {this.id,
+      required this.codFat,
+      required this.custo,
+      required this.precoFinal,
+      required this.dataFaturado,
+      required this.codAlu,
+      required this.dataInc,
+      required this.dataAlt,
+      this.aluguel});
 
   Map<String, dynamic> toMap() {
     return {
@@ -42,6 +45,7 @@ class Faturar {
       codAlu: map['CODALU'],
       dataInc: DateTime.parse(map['DATAINC']),
       dataAlt: DateTime.parse(map['DATAALT']),
+      aluguel: map['ALUGUEL'] != null ? Aluguel.fromMap(map['ALUGUEL']) : null,
     );
   }
 
@@ -55,6 +59,7 @@ class Faturar {
       codAlu: map['CODALU'],
       dataInc: DateTime.parse(map['DATAINC']),
       dataAlt: DateTime.parse(map['DATAALT']),
+      aluguel: Aluguel.fromMap(map['ALUGUEL']),
     );
   }
 }

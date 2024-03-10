@@ -5,6 +5,7 @@ import 'package:lk/components/bottomNavigationbar.dart';
 import 'package:lk/database/repository/faturar-repository.dart';
 import 'package:lk/entity/faturar.dart';
 import 'package:lk/helpers/formaters.dart';
+import 'package:lk/pages/faturar/faturadoPage.dart';
 import 'package:lk/sync/sync-faturar.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -326,7 +327,34 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ],
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => FaturadoPage()));
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "Ver faturados",
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Icon(
+                        Icons.arrow_forward,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 50),
           ],
         ),
         bottomNavigationBar: BottomNavigation(),
