@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:lk/components/appbar.dart';
 import 'package:lk/components/bottomNavigationbar.dart';
-import 'package:lk/components/topNavbar.dart';
 import 'package:lk/database/repository/faturar-repository.dart';
 import 'package:lk/entity/faturar.dart';
 import 'package:lk/helpers/formaters.dart';
@@ -20,41 +19,103 @@ class _DashboardPageState extends State<DashboardPage> {
 
   double saida = 100;
   double entrada = 10;
+  int current = 0;
 
-  _sincronizar() async {
+  _buscar() async {
     await SincronizarFaturar().buscarFaturar();
-    List<Faturar> faturados = await fatRepo.get();
-    if (mounted) {
-      saida = 0;
-      entrada = 0;
-      for (var faturado in faturados) {
+
+    DateTime mes = DateTime.now().subtract(Duration(days: 30));
+    DateTime semana = DateTime.now().subtract(Duration(days: 7));
+    DateTime dia = DateTime.now().subtract(Duration(days: 1));
+
+    if (current == 0) {
+      List<Faturar> faturados = await fatRepo.getByDate(mes);
+
+      if (mounted) {
+        entrada = 0;
+        saida = 0;
+        for (var faturado in faturados) {
+          setState(() {
+            saida += faturado.custo;
+            entrada += faturado.precoFinal;
+          });
+        }
         setState(() {
-          saida += faturado.custo;
-          entrada += faturado.precoFinal;
+          if (entrada == 0 && saida == 0) {
+            entrada = 2;
+            saida = 1;
+          }
         });
       }
+    } else if (current == 1) {
+      List<Faturar> faturados = await fatRepo.getByDate(semana);
 
-      if (entrada == 0 && saida == 0) {
-        entrada = 1;
-        saida == 0;
+      if (mounted) {
+        entrada = 0;
+        saida = 0;
+        for (var faturado in faturados) {
+          setState(() {
+            saida += faturado.custo;
+            entrada += faturado.precoFinal;
+          });
+        }
+        setState(() {
+          if (entrada == 0 && saida == 0) {
+            entrada = 2;
+            saida = 1;
+          }
+        });
+      }
+    } else if (current == 2) {
+      List<Faturar> faturados = await fatRepo.getByDate(dia);
+
+      if (mounted) {
+        saida = 0;
+        entrada = 0;
+        for (var faturado in faturados) {
+          setState(() {
+            saida += faturado.custo;
+            entrada += faturado.precoFinal;
+          });
+        }
+        setState(() {
+          if (entrada == 0 && saida == 0) {
+            entrada = 2;
+            saida = 1;
+          }
+        });
+      }
+    } else {
+      List<Faturar> faturados = await fatRepo.get();
+
+      if (mounted) {
+        saida = 0;
+        entrada = 0;
+        for (var faturado in faturados) {
+          setState(() {
+            saida += faturado.custo;
+            entrada += faturado.precoFinal;
+          });
+        }
+        setState(() {
+          if (entrada == 0 && saida == 0) {
+            entrada = 2;
+            saida = 1;
+          }
+        });
       }
     }
   }
 
-  List<String> items = [
-    "Dia",
-    "Semana",
-    "Mês",
-  ];
+  List<String> items = ["30 Dias", "7 Dias", "1 Dia", "Tudo"];
 
   /// List of body icon
   List<IconData> icons = [
     Icons.calendar_today,
     Icons.calendar_today,
     Icons.calendar_today,
+    Icons.calendar_today,
   ];
-  int current = 0;
-  PageController pageController = PageController();
 
   int touchedIndex = -1;
   List<PieChartSectionData> showingSections() {
@@ -100,7 +161,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    _sincronizar();
+    _buscar();
     BottomNavigationController instance = BottomNavigationController.instance;
     instance.changeIndex(0);
   }
@@ -122,16 +183,17 @@ class _DashboardPageState extends State<DashboardPage> {
                   return Column(
                     children: [
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
                             current = index;
                           });
+                          await _buscar();
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           margin: const EdgeInsets.all(5),
-                          width: 100,
-                          height: 55,
+                          width: 80,
+                          height: 70,
                           decoration: BoxDecoration(
                             color: current == index
                                 ? Colors.white70
@@ -233,7 +295,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: TextStyle(
                         color: Theme.of(context).primaryColorDark,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     )
                   ],
@@ -257,7 +319,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     )
                   ],

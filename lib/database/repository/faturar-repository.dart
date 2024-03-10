@@ -32,6 +32,20 @@ class FaturarRepository {
     });
   }
 
+  Future<List<Faturar>> getByDate(DateTime data) async {
+    final db = await open();
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'DATAFATURADO >= ?',
+      whereArgs: [data.toIso8601String()],
+    );
+
+    return List.generate(maps.length, (index) {
+      return Faturar.fromMap(maps[index]);
+    });
+  }
+
   Future<Faturar?> getByCodFat(int codFat) async {
     final db = await open();
     final List<Map<String, dynamic>> maps =
