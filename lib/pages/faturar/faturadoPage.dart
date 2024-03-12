@@ -47,6 +47,7 @@ class _FaturadoPageState extends State<FaturadoPage> {
         }
       }
 
+      fats.sort((a, b) => b.dataFaturado.compareTo(a.dataFaturado));
       if (mounted) {
         setState(() {
           faturados = fats;

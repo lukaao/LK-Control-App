@@ -85,7 +85,6 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
   }
 
   _callbackAddProduct(Produto prod) async {
-    print(prod);
     setState(() {
       _produtoController.text = prod.descricao!;
     });
