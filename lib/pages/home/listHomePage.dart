@@ -120,14 +120,15 @@ class _ListHomePageState extends State<ListHomePage> {
         appBar: MyAppBar(title: "Home"),
         body: Column(
           children: [
-            buildCard("Meu Plano", "Resumo do plano aqui",
+            buildCard("Meu Plano", "Contratação, atualização e cancelamento.",
                 Theme.of(context).primaryColorDark),
-            buildCard("Cadastros", "Resumo dos cadastros aqui",
+            buildCard("Cadastros", "Cadastros de registros.",
                 Theme.of(context).primaryColorDark),
-            buildCard("Suporte", "Resumo do suporte aqui",
+            buildCard(
+                "Suporte", "Contate-nos.", Theme.of(context).primaryColorDark),
+            buildCard("Sobre", "Sobre o aplicativo.",
                 Theme.of(context).primaryColorDark),
-            buildCard("Sobre", "Resumo sobre aqui",
-                Theme.of(context).primaryColorDark),
+            buildCard("Sair", "Logout.", Theme.of(context).primaryColorDark),
           ],
         ),
         bottomNavigationBar: BottomNavigation(),
