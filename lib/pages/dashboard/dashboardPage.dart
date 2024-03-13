@@ -200,8 +200,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ? Colors.white70
                                 : Colors.white54,
                             borderRadius: current == index
-                                ? BorderRadius.circular(6)
-                                : BorderRadius.circular(3),
+                                ? BorderRadius.circular(10)
+                                : BorderRadius.circular(5),
                             border: current == index
                                 ? Border.all(
                                     color: Theme.of(context).primaryColorDark,

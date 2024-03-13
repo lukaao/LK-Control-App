@@ -30,7 +30,7 @@ class MyButtom extends StatelessWidget {
             backgroundColor: MaterialStateProperty.all(
                 color == null ? Theme.of(context).primaryColorLight : color!),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(15),
             ))),
         child: Text(
           label,

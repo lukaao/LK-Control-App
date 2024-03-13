@@ -106,7 +106,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
     return SafeArea(
       child: Scaffold(
         appBar: MyAppBar(title: "Produtos"),
-        drawer: MyDrawer(),
+        drawer: filtro == false ? MyDrawer() : null,
         floatingActionButton: filtro == true
             ? null
             : FloatingActionButton(
@@ -126,26 +126,29 @@ class _ProdutosPageState extends State<ProdutosPage> {
                 SizedBox(
                   height: 10,
                 ),
-                TextFormField(
-                  onChanged: _pesquisa,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.zero,
-                    labelText: "Buscar",
-                    labelStyle: TextStyle(color: Colors.black),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.black,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: TextFormField(
+                    onChanged: _pesquisa,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      labelText: "Buscar",
+                      labelStyle: TextStyle(color: Colors.black),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.black,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+                    style: TextStyle(color: Colors.black),
                   ),
-                  style: TextStyle(color: Colors.black),
                 ),
                 SizedBox(
                   height: 10,
@@ -175,41 +178,48 @@ class _ProdutosPageState extends State<ProdutosPage> {
                                     )));
                           }
                         },
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              child: ListTile(
-                                title: Text(
+                        child: Card(
+                          elevation: 2, // Adiciona elevação
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // Borda circular
+                          ),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
                                   prod.descricao ?? '',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Status: ${(prod.status == 0) ? "Indisponível" : (prod.status == 1) ? "Disponível" : "Inativo"}",
-                                      style: TextStyle(
-                                        color: (prod.status == 1)
-                                            ? Colors.green[800]
-                                            : (prod.status == 0)
-                                                ? Colors.red
-                                                : Colors.grey,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Cód Produto: ${prod.codigo.toString()}",
-                                    ),
-                                    Text(
-                                      "Categoria: ${prod.categoria?.descricao.toString()}",
-                                    ),
-                                  ],
+                                SizedBox(height: 5),
+                                Text(
+                                  "Status: ${(prod.status == 0) ? "Indisponível" : (prod.status == 1) ? "Disponível" : "Inativo"}",
+                                  style: TextStyle(
+                                    color: (prod.status == 1)
+                                        ? Colors.green[800]
+                                        : (prod.status == 0)
+                                            ? Colors.red
+                                            : Colors.grey,
+                                  ),
                                 ),
-                              ),
+                                SizedBox(height: 5),
+                                Text(
+                                  "Cód Produto: ${prod.codigo.toString()}",
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  "Categoria: ${prod.categoria?.descricao.toString()}",
+                                ),
+                              ],
                             ),
-                            Divider(
-                              color: Theme.of(context).primaryColorDark,
-                            ),
-                          ],
+                          ),
                         ),
                       );
                     },

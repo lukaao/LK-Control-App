@@ -347,6 +347,7 @@ class _DetailAluguelPageState extends State<DetailAluguelPage> {
                         child: TextField(
                           controller: _produtoController,
                           focusNode: myFocusNodeProduto,
+                          keyboardType: TextInputType.none,
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ProdutosPage(

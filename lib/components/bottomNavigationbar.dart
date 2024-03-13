@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:lk/pages/aluguel/aluguelPage.dart";
 import "package:lk/pages/dashboard/dashboardPage.dart";
+import "package:lk/pages/home/listHomePage.dart";
 import "package:lk/pages/produto/produtoPage.dart";
 
 class BottomNavigation extends StatelessWidget {
@@ -8,7 +9,7 @@ class BottomNavigation extends StatelessWidget {
     DashboardPage(),
     ProdutosPage(),
     AluguelPage(),
-    ProdutosPage()
+    ListHomePage()
   ];
 
   BottomNavigation({super.key});
@@ -44,7 +45,7 @@ class BottomNavigation extends StatelessWidget {
     return const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
         icon: Icon(Icons.widgets),
-        label: "Inicio",
+        label: "Dashboard",
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.local_shipping),
@@ -55,8 +56,8 @@ class BottomNavigation extends StatelessWidget {
         label: "Aluguel",
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.attach_money),
-        label: "Faturado",
+        icon: Icon(Icons.home),
+        label: "Home",
       ),
     ].asMap().entries.map((entry) {
       final index = entry.key;
@@ -103,7 +104,7 @@ class BottomNavigation extends StatelessWidget {
       case 2:
         return Icons.content_paste_go_sharp;
       case 3:
-        return Icons.attach_money;
+        return Icons.home;
       default:
         return Icons.home;
     }
